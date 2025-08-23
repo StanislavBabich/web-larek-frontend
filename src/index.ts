@@ -204,9 +204,13 @@ events.on('contacts:submit', () => {
 
 // Обработка успешного завершения заказа
 events.on('order:success', (res: ApiListResponse<string>) => {
+	// Очищаем формы перед показом успешного сообщения
+	order.clear();
+	contacts.clear();
+
 	modal.render({
 		content: success.render({
-			description: res.total, // Указываем общую сумму заказа в модальном окне
+			description: res.total,
 		}),
 	});
 });

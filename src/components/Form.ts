@@ -10,6 +10,7 @@ interface IFormState {
 export class Form<T> extends Component<IFormState> {
 	protected _submit: HTMLButtonElement; // Кнопка отправки формы
 	protected _errors: HTMLElement; // Элемент для отображения ошибок
+	protected _inputs: NodeListOf<HTMLInputElement>; // Все поля ввода формы
 
 	constructor(protected container: HTMLFormElement, protected events: IEvents) {
 		super(container);
@@ -19,6 +20,7 @@ export class Form<T> extends Component<IFormState> {
 			this.container // Находим кнопку отправки
 		);
 		this._errors = ensureElement<HTMLElement>('.form__errors', this.container);
+		this._inputs = this.container.querySelectorAll('input');
 
 		this.container.addEventListener('input', (e: Event) => {
 			const target = e.target as HTMLInputElement;
@@ -41,8 +43,16 @@ export class Form<T> extends Component<IFormState> {
 		});
 	}
 
+	// Метод для очистки всех полей формы
+	public clear(): void {
+		this._inputs.forEach((input) => {
+			input.value = '';
+		});
+		this.setText(this._errors, '');
+	}
+
 	set valid(value: boolean) {
-		this._submit.disabled = !value; // Устанавливаем доступность кнопки отправки
+		this.setDisabled(this._submit, !value); // Используем метод setDisabled из Component
 	}
 
 	set errors(value: string) {
